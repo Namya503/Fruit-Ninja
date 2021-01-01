@@ -14,11 +14,16 @@ function preload(){
   monsterImage=loadImage("alien1.png")
   gameOverSound=loadSound("gameover.mp3")
   knifeSound=loadSound("knifeSwooshSound.mp3")
+  restartImage=loadImage("restart.PNG")
 }
 function setup(){
   createCanvas (600,600);
   knife=createSprite (0,0,300,330);
   knife.addImage(knifeImage);
+  
+  restart=createSprite(300,220,20,20);
+  restart.addImage(restartImage);
+    
   
  // fruit1=createSprite(200,200,20,20);
   
@@ -33,16 +38,23 @@ function setup(){
   
   knife.setCollider("rectangle",0,0,40,40);
   
+ 
+  
 }
 
 function draw(){
+  
+  
   background('lightblue');
+  text("Score: "+ score, 500,50);
+  
   if(gameState===PLAY){
     knife.x= World.mouseX;
     knife.y= World.mouseY;
     fruits();
     enemy();
-  }
+    restart.visible = false;
+  
   if(fruitGroup.isTouching(knife)){
      fruitGroup.destroyEach();
      knifeSound.play();
@@ -62,9 +74,23 @@ function draw(){
      gameOverSound.play();
      
    }
+   
+  }
+  if(gameState===END){
+      restart.visible = true;
+     if(mousePressedOver(restart)) {
+      reset();
+    }
+  }
   drawSprites();
-  text("Score: "+ score, 500,50);
+  
 }
+function reset(){
+ gameState=PLAY
+ score=0
+ knife.addImage(knifeImage)
+}
+
 function fruits(){
   if(World.frameCount%80==0){
     position = Math.round(random(1,2));
